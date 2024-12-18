@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const connectDB = require("./utils/db");
 
 const PORT = process.env.PORT || 8080;
 const app = express();
@@ -23,5 +24,6 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, () => {
+	connectDB();
 	console.log(`Server is running on port ${PORT}`);
 });
