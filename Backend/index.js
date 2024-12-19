@@ -3,6 +3,7 @@ const dotenv = require("dotenv").config();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const connectDB = require("./utils/db");
+const userRoute = require("./routes/user.route");
 
 const PORT = process.env.PORT || 8080;
 const app = express();
@@ -22,6 +23,7 @@ app.use(express.json());
 app.get("/", (req, res) => {
 	res.status(200).send("Welcome to Instagram-clone API");
 });
+app.use("/api/v1/user", userRoute);
 
 app.listen(PORT, () => {
 	connectDB();
