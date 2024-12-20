@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user.model");
-const upload = require("../utils/uploadFile");
+const uploadStream = require("../utils/uploadFile");
 
 const register = async (req, res) => {
 	const { username, email, password } = req.body;
@@ -168,13 +168,13 @@ const updateProfile = async (req, res) => {
 		}
 
 		const file = req.file;
-		const result = await upload(file);
-		console.log(result);
+
+		const result = await uploadStream(file.buffer, "image");
 
 		user.username = username || user.username;
 		user.email = email || user.email;
 		user.bio = bio || user.bio;
-		// user.profilePic = profilePic || user.profilePic;
+		user.profilePic = result.secure_url || user.profilePic;
 		await user.save();
 
 		return res.status(200).json({
