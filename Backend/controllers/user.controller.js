@@ -221,8 +221,10 @@ const followUser = async (req, res) => {
 		const userId = req.userId;
 		const followingId = req.params.id;
 
-		const user = await User.findById(userId);
-		const followingUser = await User.findById(followingId);
+		const [user, followingUser] = await Promise.all([
+			User.findById(userId),
+			User.findById(followingId),
+		]);
 
 		if (!user || !followingUser) {
 			return res.status(401).json({
@@ -244,23 +246,24 @@ const followUser = async (req, res) => {
 			});
 		}
 
-		const newFollowing = await Follower.findOneAndUpdate(
-			{ author: userId },
-			{
-				author: userId,
-				$push: { following: followingId },
-			},
-			{ upsert: true }
-		);
-
-		const newFollower = await Follower.findOneAndUpdate(
-			{ author: followingId },
-			{
-				author: followingId,
-				$push: { following: userId },
-			},
-			{ upsert: true }
-		);
+		await Promise.all([
+			Follower.findOneAndUpdate(
+				{ author: userId },
+				{
+					author: userId,
+					$push: { following: followingId },
+				},
+				{ upsert: true }
+			),
+			Follower.findOneAndUpdate(
+				{ author: followingId },
+				{
+					author: followingId,
+					$push: { following: userId },
+				},
+				{ upsert: true }
+			),
+		]);
 
 		return res.status(200).json({
 			success: true,
@@ -279,8 +282,10 @@ const unfollowUser = async (req, res) => {
 		const userId = req.userId;
 		const followingId = req.params.id;
 
-		const user = await User.findById(userId);
-		const followingUser = await User.findById(followingId);
+		const [user, followingUser] = await Promise.all([
+			User.findById(userId),
+			User.findById(followingId),
+		]);
 
 		if (!user || !followingUser) {
 			return res.status(401).json({
@@ -302,21 +307,22 @@ const unfollowUser = async (req, res) => {
 			});
 		}
 
-		await Follower.findOneAndUpdate(
-			{ author: userId },
-			{
-				author: userId,
-				$pull: { following: followingId },
-			}
-		);
-
-		await Follower.findOneAndUpdate(
-			{ author: followingId },
-			{
-				author: followingId,
-				$pull: { following: userId },
-			}
-		);
+		await Promise.all([
+			Follower.findOneAndUpdate(
+				{ author: userId },
+				{
+					author: userId,
+					$pull: { following: followingId },
+				}
+			),
+			Follower.findOneAndUpdate(
+				{ author: followingId },
+				{
+					author: followingId,
+					$pull: { following: userId },
+				}
+			),
+		]);
 
 		return res.status(200).json({
 			success: true,
