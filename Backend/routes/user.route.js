@@ -10,7 +10,7 @@ const {
 	unfollowUser,
 } = require("../controllers/user.controller");
 const isAuthenticated = require("../middlewares/isAuthenticated");
-const { singleUpload } = require("../middlewares/multer");
+const upload = require("../middlewares/multer");
 
 const router = express.Router();
 
@@ -22,7 +22,12 @@ router.get("/logout", logout);
 
 router.get("/profile/:id", getProfile);
 
-router.patch("/profile-update", isAuthenticated, singleUpload, updateProfile);
+router.patch(
+	"/profile-update",
+	isAuthenticated,
+	upload.single("file"),
+	updateProfile
+);
 
 router.get("/suggested-users", isAuthenticated, getSuggestedUsers);
 
