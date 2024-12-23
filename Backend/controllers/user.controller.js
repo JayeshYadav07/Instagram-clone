@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user.model");
+const Post = require("../models/post.model");
 const Follower = require("../models/follower.model");
 const uploadStream = require("../utils/uploadFile");
 
@@ -137,13 +138,26 @@ const getProfile = async (req, res) => {
 		}
 
 		// Fetch followers and following
+		const author = await Follower.findOne({
+			author: id,
+		});
+
+		let following = 0;
+		let follower = 0;
+		if (author) {
+			following = author.following.length;
+			follower = author.follower.length;
+		}
 
 		// Fetch posts
+		const posts = await Post.find({
+			author: id,
+		});
 
 		return res.status(200).json({
 			success: true,
 			message: "Profile fetched successfully!",
-			data: user,
+			data: { user, following, follower, posts },
 		});
 	} catch (error) {
 		return res.status(401).json({
