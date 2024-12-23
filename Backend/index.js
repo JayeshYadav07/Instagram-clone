@@ -4,6 +4,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const connectDB = require("./utils/db");
 const userRoute = require("./routes/user.route");
+const postRoute = require("./routes/post.route");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -24,6 +25,7 @@ app.get("/", (req, res) => {
 	res.status(200).send("Welcome to Instagram-clone API");
 });
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/post", postRoute);
 
 app.listen(PORT, () => {
 	connectDB();
