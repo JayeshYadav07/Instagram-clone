@@ -5,13 +5,13 @@ const cookieParser = require("cookie-parser");
 const connectDB = require("./utils/db");
 const userRoute = require("./routes/user.route");
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8000;
 const app = express();
 
 // Middlewares
 app.use(
 	cors({
-		origin: process.env.CLIENT_URL || "http://localhost:5173/",
+		origin: process.env.CLIENT_URL.split(",") || "http://localhost:5173/",
 		credentials: true,
 	})
 );
