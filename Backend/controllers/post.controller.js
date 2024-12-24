@@ -1,6 +1,7 @@
 const uploadStream = require("../utils/uploadFile");
 const Post = require("../models/post.model");
 const Comment = require("../models/comment.model");
+const User = require("../models/user.model");
 const addPost = async (req, res) => {
 	try {
 		const { caption } = req.body;
@@ -28,6 +29,8 @@ const addPost = async (req, res) => {
 			post_url: result.secure_url,
 			caption: caption,
 		});
+
+		await User.updateOne({ _id: userId }, { $push: { posts: post._id } });
 
 		return res.status(200).json({
 			success: true,
@@ -213,11 +216,113 @@ const dislikePost = async (req, res) => {
 	}
 };
 
+const getAllCommentsOfPost = async (req, res) => {
+	try {
+		const postId = req.params.id;
+		const comments = await Comment.find({ post: postId })
+			.populate({
+				path: "author",
+				select: "username profilePic",
+			})
+			.sort({ createdAt: -1 });
+		return res.status(200).json({
+			success: true,
+			message: "Comments fetched successfully!",
+			data: comments,
+		});
+	} catch (error) {
+		return res.status(401).json({
+			success: false,
+			message: error.message,
+		});
+	}
+};
+
+const deletePost = async (req, res) => {
+	try {
+		const userId = req.userId;
+		const postId = req.params.id;
+
+		const post = await Post.findOne({ _id: postId, author: userId });
+
+		console.log(post);
+
+		if (!post) {
+			return res.status(401).json({
+				success: false,
+				message: "Post not found!",
+			});
+		}
+
+		await Promise.all([
+			Post.deleteOne({ _id: postId }),
+			Comment.deleteMany({ post: postId }),
+			User.updateOne({ _id: userId }, { $pull: { posts: postId } }),
+		]);
+
+		return res.status(200).json({
+			success: true,
+			message: "Post deleted successfully!",
+		});
+	} catch (error) {
+		return res.status(401).json({
+			success: false,
+			message: error.message,
+		});
+	}
+};
+
+const bookmarkPost = async (req, res) => {
+	try {
+		const userId = req.userId;
+		const postId = req.params.id;
+
+		const post = await Post.findById(postId);
+
+		if (!post) {
+			return res.status(401).json({
+				success: false,
+				message: "Post not found!",
+			});
+		}
+
+		const user = await User.findById(userId);
+
+		if (user.bookmarks.includes(postId)) {
+			await User.updateOne(
+				{ _id: userId },
+				{ $pull: { bookmarks: postId } }
+			);
+			return res.status(200).json({
+				success: true,
+				message: "Post removed from bookmarks!",
+			});
+		} else {
+			await User.updateOne(
+				{ _id: userId },
+				{ $push: { bookmarks: postId } }
+			);
+			return res.status(200).json({
+				success: true,
+				message: "Post added to bookmarks!",
+			});
+		}
+	} catch (error) {
+		return res.status(401).json({
+			success: false,
+			message: error.message,
+		});
+	}
+};
+
 module.exports = {
 	addPost,
 	getAllPosts,
 	getUserPosts,
-	addComment,
 	likePost,
 	dislikePost,
+	addComment,
+	getAllCommentsOfPost,
+	deletePost,
+	bookmarkPost,
 };
