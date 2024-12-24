@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user.model");
 const Post = require("../models/post.model");
-const Follower = require("../models/follower.model");
 const uploadStream = require("../utils/uploadFile");
 
 const register = async (req, res) => {
@@ -128,7 +127,15 @@ const getProfile = async (req, res) => {
 	const id = req.params.id;
 	try {
 		// Fetch user basic details
-		const user = await User.findById(id, { password: 0 });
+		const user = await User.findById(id, "-password")
+			.populate({
+				path: "posts",
+				createdAt: -1,
+			})
+			.populate({
+				path: "bookmarks",
+				createdAt: -1,
+			});
 
 		if (!user) {
 			return res.status(401).json({
@@ -136,28 +143,10 @@ const getProfile = async (req, res) => {
 				message: "User not found!",
 			});
 		}
-
-		// Fetch followers and following
-		const author = await Follower.findOne({
-			author: id,
-		});
-
-		let following = 0;
-		let follower = 0;
-		if (author) {
-			following = author.following.length;
-			follower = author.follower.length;
-		}
-
-		// Fetch posts
-		const posts = await Post.find({
-			author: id,
-		});
-
 		return res.status(200).json({
 			success: true,
 			message: "Profile fetched successfully!",
-			data: { user, following, follower, posts },
+			data: user,
 		});
 	} catch (error) {
 		return res.status(401).json({
@@ -172,7 +161,7 @@ const updateProfile = async (req, res) => {
 	try {
 		const { username, email, bio } = req.body;
 
-		const user = await User.findById(id);
+		const user = await User.findById(id, "-password");
 
 		if (!user) {
 			return res.status(401).json({
@@ -248,8 +237,8 @@ const followUser = async (req, res) => {
 		}
 
 		// check if user is already following
-		const isFollowing = await Follower.findOne({
-			author: userId,
+		const isFollowing = await User.findOne({
+			_id: userId,
 			following: followingId,
 		});
 
@@ -261,21 +250,13 @@ const followUser = async (req, res) => {
 		}
 
 		await Promise.all([
-			Follower.findOneAndUpdate(
-				{ author: userId },
-				{
-					author: userId,
-					$push: { following: followingId },
-				},
-				{ upsert: true }
+			User.updateOne(
+				{ _id: userId },
+				{ $push: { following: followingId } }
 			),
-			Follower.findOneAndUpdate(
-				{ author: followingId },
-				{
-					author: followingId,
-					$push: { following: userId },
-				},
-				{ upsert: true }
+			User.updateOne(
+				{ _id: followingId },
+				{ $push: { followers: userId } }
 			),
 		]);
 
@@ -309,8 +290,8 @@ const unfollowUser = async (req, res) => {
 		}
 
 		// check if user is already following
-		const isFollowing = await Follower.findOne({
-			author: userId,
+		const isFollowing = await User.findOne({
+			_id: userId,
 			following: followingId,
 		});
 
@@ -322,19 +303,13 @@ const unfollowUser = async (req, res) => {
 		}
 
 		await Promise.all([
-			Follower.findOneAndUpdate(
-				{ author: userId },
-				{
-					author: userId,
-					$pull: { following: followingId },
-				}
+			User.updateOne(
+				{ _id: userId },
+				{ $pull: { following: followingId } }
 			),
-			Follower.findOneAndUpdate(
-				{ author: followingId },
-				{
-					author: followingId,
-					$pull: { following: userId },
-				}
+			User.updateOne(
+				{ _id: followingId },
+				{ $pull: { followers: userId } }
 			),
 		]);
 
