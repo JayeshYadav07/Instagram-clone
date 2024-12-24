@@ -4,6 +4,8 @@ const {
 	getAllPosts,
 	addComment,
 	getUserPosts,
+	likePost,
+	dislikePost,
 } = require("../controllers/post.controller");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const upload = require("../middlewares/multer");
@@ -16,5 +18,9 @@ router.get("/all", isAuthenticated, getAllPosts);
 router.post("/add", isAuthenticated, upload.single("file"), addPost);
 
 router.post("/comment/:id", isAuthenticated, addComment);
+
+router.post("/like/:id", isAuthenticated, likePost);
+
+router.post("/dislike/:id", isAuthenticated, dislikePost);
 
 module.exports = router;

@@ -144,4 +144,80 @@ const addComment = async (req, res) => {
 	}
 };
 
-module.exports = { addPost, getAllPosts, getUserPosts, addComment };
+const likePost = async (req, res) => {
+	try {
+		const userId = req.userId;
+		const postId = req.params.id;
+
+		const post = await Post.findById(postId);
+
+		if (!post) {
+			return res.status(401).json({
+				success: false,
+				message: "Post not found!",
+			});
+		}
+
+		if (post.likes.includes(userId)) {
+			return res.status(401).json({
+				success: false,
+				message: "You have already liked this post!",
+			});
+		}
+
+		await Post.updateOne({ _id: postId }, { $push: { likes: userId } });
+
+		return res.status(200).json({
+			success: true,
+			message: "Post liked successfully!",
+		});
+	} catch (error) {
+		return res.status(401).json({
+			success: false,
+			message: error.message,
+		});
+	}
+};
+
+const dislikePost = async (req, res) => {
+	try {
+		const userId = req.userId;
+		const postId = req.params.id;
+
+		const post = await Post.findById(postId);
+		if (!post) {
+			return res.status(401).json({
+				success: false,
+				message: "Post not found!",
+			});
+		}
+
+		if (!post.likes.includes(userId)) {
+			return res.status(401).json({
+				success: false,
+				message: "You have not liked this post!",
+			});
+		}
+
+		await Post.updateOne({ _id: postId }, { $pull: { likes: userId } });
+
+		return res.status(200).json({
+			success: true,
+			message: "Post disliked successfully!",
+		});
+	} catch (error) {
+		return res.status(401).json({
+			success: false,
+			message: error.message,
+		});
+	}
+};
+
+module.exports = {
+	addPost,
+	getAllPosts,
+	getUserPosts,
+	addComment,
+	likePost,
+	dislikePost,
+};
