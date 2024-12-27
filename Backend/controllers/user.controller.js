@@ -92,12 +92,20 @@ const login = async (req, res) => {
 			httpOnly: true,
 		};
 
+		const userPosts = await Post.find({ author: user._id }).sort({
+			createdAt: -1,
+		});
+
 		const userDetails = {
 			_id: user._id,
 			username: user.username,
 			email: user.email,
 			profilePic: user.profilePic,
 			bio: user.bio,
+			followers: user.followers,
+			following: user.following,
+			posts: userPosts,
+			bookmarks: user.bookmarks,
 		};
 
 		return res
