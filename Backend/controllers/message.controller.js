@@ -63,6 +63,40 @@ const sendMessage = async (req, res) => {
 	}
 };
 
+const getMessages = async (req, res) => {
+	try {
+		const senderId = req.userId;
+		const receiverId = req.params.id;
+
+		const conversation = await Conversation.findOne({
+			participants: {
+				$all: [senderId, receiverId],
+			},
+		}).populate({
+			path: "messages",
+			options: { sort: { createdAt: -1 } },
+		});
+
+		if (!conversation) {
+			return res.status(401).json({
+				success: false,
+				message: "Conversation not found!",
+			});
+		}
+
+		return res.status(200).json({
+			success: true,
+			message: "Conversation found successfully.",
+			data: conversation.messages,
+		});
+	} catch (error) {
+		return res.status(401).send({
+			success: false,
+			message: error.message,
+		});
+	}
+};
 module.exports = {
 	sendMessage,
+	getMessages,
 };
