@@ -10,7 +10,7 @@ const messageRoute = require("./routes/message.route");
 const PORT = process.env.PORT || 8000;
 const app = express();
 const corsOptions = {
-	origin: process.env.CLIENT_URL.split(",") || "http://localhost:5173/",
+	origin: process.env.CLIENT_URL.split(",") || "http://localhost:5173",
 	credentials: true,
 };
 
