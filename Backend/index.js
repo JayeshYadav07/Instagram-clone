@@ -6,6 +6,7 @@ const connectDB = require("./utils/db");
 const userRoute = require("./routes/user.route");
 const postRoute = require("./routes/post.route");
 const messageRoute = require("./routes/message.route");
+const limiter = require("./utils/rateLimiter");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -15,6 +16,7 @@ const corsOptions = {
 };
 
 // Middlewares
+app.use(limiter);
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
