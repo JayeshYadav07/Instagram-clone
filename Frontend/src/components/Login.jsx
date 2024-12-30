@@ -6,10 +6,9 @@ import { Input } from "./ui/input";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
 
-export default function Signup() {
+export default function Login() {
 	const [input, setInput] = useState({
 		username: "",
-		email: "",
 		password: "",
 	});
 	const [loading, setLoading] = useState(false);
@@ -21,13 +20,9 @@ export default function Signup() {
 		setLoading(true);
 		e.preventDefault();
 		try {
-			const response = await axios.post(
-				`${API_URL}/user/register`,
-				input,
-				{
-					withCredentials: true,
-				}
-			);
+			const response = await axios.post(`${API_URL}/user/login`, input, {
+				withCredentials: true,
+			});
 			if (response.data.success) {
 				toast.success(response.data.message, TOAST_OPTION);
 			} else {
@@ -49,23 +44,13 @@ export default function Signup() {
 				onSubmit={handleSubmit}
 				className="shadow-md rounded p-4 flex flex-col gap-4 md:min-w-[400px]"
 			>
-				<h1 className="text-3xl font-semibold text-center">Signup</h1>
+				<h1 className="text-3xl font-semibold text-center">Login</h1>
 				<div className="flex flex-col gap-2">
 					<span>Username</span>
 					<Input
 						type="text"
 						placeholder="Username"
 						name="username"
-						onChange={handleChange}
-						required={true}
-					/>
-				</div>
-				<div className="flex flex-col gap-2">
-					<span>Email</span>
-					<Input
-						type="email"
-						placeholder="Email"
-						name="email"
 						onChange={handleChange}
 						required={true}
 					/>
@@ -82,12 +67,12 @@ export default function Signup() {
 				</div>
 				<div className="flex flex-col gap-2">
 					<Button disabled={loading}>
-						Signup
+						Login
 						{loading && <Loader className="animate-spin ml-2" />}
 					</Button>
 					<small className="text-center">
-						Already have an account?{" "}
-						<span className="underline text-blue-500">Login</span>
+						Don&apos;t have an account?{" "}
+						<span className="underline text-blue-500">Signup</span>
 					</small>
 				</div>
 			</form>
