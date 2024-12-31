@@ -1,12 +1,14 @@
 import { API_URL, TOAST_OPTION } from "@/utils/constant";
 import axios from "axios";
+import { Loader } from "lucide-react";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { toast } from "sonner";
-import { Loader } from "lucide-react";
 
 export default function Signup() {
+	const navigate = useNavigate();
 	const [input, setInput] = useState({
 		username: "",
 		email: "",
@@ -30,6 +32,7 @@ export default function Signup() {
 			);
 			if (response.data.success) {
 				toast.success(response.data.message, TOAST_OPTION);
+				navigate("/login");
 			} else {
 				toast.error(response.data.message, TOAST_OPTION);
 			}
@@ -81,13 +84,19 @@ export default function Signup() {
 					/>
 				</div>
 				<div className="flex flex-col gap-2">
-					<Button disabled={loading}>
-						Signup
-						{loading && <Loader className="animate-spin ml-2" />}
-					</Button>
+					{loading ? (
+						<Button disabled>
+							<Loader className="animate-spin ml-2" />
+							<span>Please Wait</span>
+						</Button>
+					) : (
+						<Button>Signup</Button>
+					)}
 					<small className="text-center">
 						Already have an account?{" "}
-						<span className="underline text-blue-500">Login</span>
+						<span className="underline text-blue-500">
+							<Link to="/login">Login</Link>
+						</span>
 					</small>
 				</div>
 			</form>

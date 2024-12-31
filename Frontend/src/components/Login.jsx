@@ -5,8 +5,10 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
+	const navigate = useNavigate();
 	const [input, setInput] = useState({
 		username: "",
 		password: "",
@@ -25,6 +27,7 @@ export default function Login() {
 			});
 			if (response.data.success) {
 				toast.success(response.data.message, TOAST_OPTION);
+				navigate("/");
 			} else {
 				toast.error(response.data.message, TOAST_OPTION);
 			}
@@ -66,13 +69,19 @@ export default function Login() {
 					/>
 				</div>
 				<div className="flex flex-col gap-2">
-					<Button disabled={loading}>
-						Login
-						{loading && <Loader className="animate-spin ml-2" />}
-					</Button>
+					{loading ? (
+						<Button disabled>
+							<Loader className="animate-spin ml-2" />
+							<span>Please Wait</span>
+						</Button>
+					) : (
+						<Button>Login</Button>
+					)}
 					<small className="text-center">
 						Don&apos;t have an account?{" "}
-						<span className="underline text-blue-500">Signup</span>
+						<span className="underline text-blue-500">
+							<Link to="/signup">Signup</Link>
+						</span>
 					</small>
 				</div>
 			</form>
