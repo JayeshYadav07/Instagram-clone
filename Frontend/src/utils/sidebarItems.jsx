@@ -16,7 +16,7 @@ const sidebarItem = [
 	},
 	{
 		id: crypto.randomUUID(),
-		title: "search",
+		title: "Search",
 		icon: <Search />,
 	},
 	{
