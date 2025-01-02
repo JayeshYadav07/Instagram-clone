@@ -5,9 +5,9 @@ import { Outlet } from "react-router-dom";
 
 function MainLayout() {
 	return (
-		<div className="flex min-h-screen bg-gray-100">
+		<div className="flex h-screen overflow-hidden bg-gray-100">
 			<LeftSidebar />
-			<div className="flex-grow p-4">
+			<div className="flex-grow p-4 overflow-y-scroll scrollbar-hide">
 				<Outlet />
 			</div>
 			<RightSidebar />
