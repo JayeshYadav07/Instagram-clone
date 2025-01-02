@@ -15,7 +15,7 @@ import {
 	TooltipTrigger,
 } from "./ui/tooltip";
 import { useState } from "react";
-import PostDialogBox from "./PostDialogBox";
+import CommentDialogBox from "./CommentDialogBox";
 
 function Post() {
 	const [text, setText] = useState("");
@@ -38,12 +38,11 @@ function Post() {
 						<Button variant="ghost">Unfollow</Button>
 						<Button variant="ghost">Add to favorites</Button>
 						<Button variant="ghost">Delete</Button>
-						<Button variant="ghost">Cancel</Button>
 					</DialogContent>
 				</Dialog>
 			</div>
 			<img
-				className="w-full h-[500px] rounded-sm object-cover"
+				className="w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-sm object-cover md:px-6 lg:px-8 bg-white"
 				src="https://github.com/shadcn.png"
 				alt="img"
 			/>
@@ -101,7 +100,7 @@ function Post() {
 			>
 				View all 100 comments
 			</p>
-			<PostDialogBox open={open} setOpen={setOpen} />
+			<CommentDialogBox open={open} setOpen={setOpen} />
 			<div className="flex justify-between items-center gap-2">
 				<input
 					type="text"
