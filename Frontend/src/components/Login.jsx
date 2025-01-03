@@ -6,8 +6,11 @@ import { Input } from "./ui/input";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setAuthUser } from "@/redux/authSlice";
 
 export default function Login() {
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [input, setInput] = useState({
 		username: "",
@@ -26,6 +29,7 @@ export default function Login() {
 				withCredentials: true,
 			});
 			if (response.data.success) {
+				dispatch(setAuthUser(response.data.data));
 				toast.success(response.data.message, TOAST_OPTION);
 				navigate("/");
 			} else {
