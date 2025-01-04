@@ -4,8 +4,11 @@ import sidebarItem from "@/utils/sidebarItems";
 import { API_URL, TOAST_OPTION } from "@/utils/constant";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setAuthUser } from "@/redux/authSlice";
 
 function LeftSidebar() {
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const handleLogout = async () => {
 		try {
@@ -14,6 +17,7 @@ function LeftSidebar() {
 			});
 
 			if (response.data.success) {
+				dispatch(setAuthUser(null));
 				toast.success(response.data.message, TOAST_OPTION);
 				navigate("/login");
 			} else {
