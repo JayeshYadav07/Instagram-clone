@@ -1,15 +1,69 @@
-import axios from "axios";
-import SidebarItem from "./SidebarItem";
-import sidebarItem from "@/utils/sidebarItems";
-import { API_URL, TOAST_OPTION } from "@/utils/constant";
-import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { setAuthUser } from "@/redux/authSlice";
+import { API_URL, TOAST_OPTION } from "@/utils/constant";
+import axios from "axios";
+import {
+	Compass,
+	LogOut,
+	LucideHome,
+	MessageCircle,
+	Plus,
+	Search,
+} from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import SidebarItem from "./SidebarItem";
 
 function LeftSidebar() {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const { user } = useSelector((state) => state.auth);
+
+	const sidebarItem = [
+		{
+			id: crypto.randomUUID(),
+			title: "Home",
+			icon: <LucideHome />,
+		},
+		{
+			id: crypto.randomUUID(),
+			title: "Search",
+			icon: <Search />,
+		},
+		{
+			id: crypto.randomUUID(),
+			title: "Explore",
+			icon: <Compass />,
+		},
+		{
+			id: crypto.randomUUID(),
+			title: "Messages",
+			icon: <MessageCircle />,
+		},
+		{
+			id: crypto.randomUUID(),
+			title: "Create",
+			icon: <Plus />,
+		},
+		{
+			id: crypto.randomUUID(),
+			title: "Profile",
+			icon: (
+				<Avatar className="h-6 w-6">
+					<AvatarImage src={user?.profilePic} />
+					<AvatarFallback>
+						{user?.username.charAt(0).toUpperCase()}
+					</AvatarFallback>
+				</Avatar>
+			),
+		},
+		{
+			id: crypto.randomUUID(),
+			title: "Logout",
+			icon: <LogOut />,
+		},
+	];
 	const handleLogout = async () => {
 		try {
 			const response = await axios.get(`${API_URL}/user/logout`, {
@@ -37,6 +91,7 @@ function LeftSidebar() {
 			navigate(`/${title.toLowerCase()}`);
 		}
 	};
+
 	return (
 		<div className="hidden md:block md:w-1/4 lg:w-1/5 xl:w-1/6 bg-white p-4 shadow">
 			<div>
