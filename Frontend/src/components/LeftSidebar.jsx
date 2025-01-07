@@ -14,11 +14,14 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import SidebarItem from "./SidebarItem";
+import CreatePost from "./CreatePost";
+import { useState } from "react";
 
 function LeftSidebar() {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { user } = useSelector((state) => state.auth);
+	const [openCreatePost, setOpenCreatePost] = useState(false);
 
 	const sidebarItem = [
 		{
@@ -87,8 +90,8 @@ function LeftSidebar() {
 	const handleClick = (title) => {
 		if (title === "Logout") {
 			return handleLogout();
-		} else {
-			navigate(`/${title.toLowerCase()}`);
+		} else if (title === "Create") {
+			setOpenCreatePost(true);
 		}
 	};
 
@@ -113,6 +116,7 @@ function LeftSidebar() {
 					);
 				})}
 			</div>
+			<CreatePost open={openCreatePost} setOpen={setOpenCreatePost} />
 		</div>
 	);
 }
