@@ -17,7 +17,7 @@ import {
 import { useState } from "react";
 import CommentDialogBox from "./CommentDialogBox";
 
-function Post() {
+function Post({ post }) {
 	const [text, setText] = useState("");
 	const [open, setOpen] = useState(false);
 	return (
@@ -25,10 +25,12 @@ function Post() {
 			<div className="flex justify-between items-center mb-2">
 				<div className="flex gap-2 items-center">
 					<Avatar className="h-10 w-10">
-						<AvatarImage src="https://github.com/shadcn.png" />
-						<AvatarFallback>CN</AvatarFallback>
+						<AvatarImage src={post.author.profilePic} />
+						<AvatarFallback>
+							{post.author.username[0].toUpperCase()}
+						</AvatarFallback>
 					</Avatar>
-					<span>Username</span>
+					<span>{post.author.username}</span>
 				</div>
 				<Dialog>
 					<DialogTrigger>
@@ -42,8 +44,8 @@ function Post() {
 				</Dialog>
 			</div>
 			<img
-				className="w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-sm object-cover md:px-6 lg:px-8 bg-white"
-				src="https://github.com/shadcn.png"
+				className="w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-sm object-cover py-2 md:px-6 lg:px-8 bg-white"
+				src={post.post_url}
 				alt="img"
 			/>
 			<div className="flex justify-between items-center my-2">
@@ -93,14 +95,14 @@ function Post() {
 					</Tooltip>
 				</TooltipProvider>
 			</div>
-			<span>100 likes</span>
+			<span>{post.likes.length} likes</span>
 			<p
 				className="text-sm text-gray-500 cursor-pointer"
 				onClick={() => setOpen(true)}
 			>
-				View all 100 comments
+				View all {post.comments.length} comments
 			</p>
-			<CommentDialogBox open={open} setOpen={setOpen} />
+			<CommentDialogBox open={open} setOpen={setOpen} post={post} />
 			<div className="flex justify-between items-center gap-2">
 				<input
 					type="text"
