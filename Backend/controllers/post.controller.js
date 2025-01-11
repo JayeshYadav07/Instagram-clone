@@ -132,8 +132,11 @@ const addComment = async (req, res) => {
 		});
 
 		post.comments.push(newComment);
-
 		await post.save();
+		await newComment.populate({
+			path: "author",
+			select: "username profilePic",
+		});
 
 		return res.status(200).json({
 			success: true,
