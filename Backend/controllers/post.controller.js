@@ -246,8 +246,6 @@ const deletePost = async (req, res) => {
 
 		const post = await Post.findOne({ _id: postId, author: userId });
 
-		console.log(post);
-
 		if (!post) {
 			return res.status(401).json({
 				success: false,

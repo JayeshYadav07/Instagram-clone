@@ -21,6 +21,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "./ui/tooltip";
+import { addBookmark, removeBookmark } from "@/redux/authSlice";
 
 function Post({ post }) {
 	const dispatch = useDispatch();
@@ -28,6 +29,31 @@ function Post({ post }) {
 	const { posts } = useSelector((state) => state.post);
 	const [text, setText] = useState("");
 	const [open, setOpen] = useState(false);
+
+	const handleAddToBookmark = async (id) => {
+		try {
+			const response = await axios.post(
+				`${API_URL}/post/bookmark/${id}`,
+				{},
+				{
+					withCredentials: true,
+				}
+			);
+
+			if (response.data.success) {
+				if (user.bookmarks.includes(id)) {
+					dispatch(removeBookmark(id));
+				} else {
+					dispatch(addBookmark(id));
+				}
+				toast.success(response.data.message, TOAST_OPTION);
+			} else {
+				toast.error(response.data.message, TOAST_OPTION);
+			}
+		} catch (error) {
+			toast.error("Something went wrong", TOAST_OPTION);
+		}
+	};
 
 	const handleLikeAndDislike = async (id) => {
 		try {
@@ -124,7 +150,18 @@ function Post({ post }) {
 					</DialogTrigger>
 					<DialogContent className="flex flex-col text-sm text-center max-w-sm">
 						<Button variant="ghost">Unfollow</Button>
-						<Button variant="ghost">Add to favorites</Button>
+						<Button
+							variant="ghost"
+							onClick={() => handleAddToBookmark(post._id)}
+						>
+							{user.bookmarks.includes(post._id) ? (
+								<span className="text-red-500">
+									Remove from bookmarks
+								</span>
+							) : (
+								<span>Add to bookmarks</span>
+							)}
+						</Button>
 						{user._id === post.author._id && (
 							<Button
 								variant="ghost"
@@ -150,7 +187,7 @@ function Post({ post }) {
 									className="cursor-pointer hover:text-gray-500"
 									fill={
 										post.likes.includes(user._id)
-											? "red"
+											? "#ff0000"
 											: "none"
 									}
 									onClick={() =>
