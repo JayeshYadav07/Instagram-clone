@@ -13,7 +13,7 @@ function CommentDialogBox({ open, setOpen, post }) {
 					<img
 						src={post.post_url}
 						alt="post-img"
-						className="w-full h-full object-cover rounded-lg"
+						className="w-full h-96 object-contain rounded-lg"
 					/>
 				</div>
 				<div className="md:w-1/2 flex flex-col">
@@ -21,11 +21,13 @@ function CommentDialogBox({ open, setOpen, post }) {
 						<div className="flex gap-2 items-center">
 							<Avatar className="h-10 w-10">
 								<AvatarImage src={post.author.profilePic} />
-								<AvatarFallback>
+								<AvatarFallback className="bg-white text-lg">
 									{post.author.username[0].toUpperCase()}
 								</AvatarFallback>
 							</Avatar>
-							<span>{post.author.username}</span>
+							<span className="font-semibold">
+								{post.author.username}
+							</span>
 						</div>
 						<Dialog>
 							<DialogTrigger>
@@ -44,8 +46,22 @@ function CommentDialogBox({ open, setOpen, post }) {
 							</DialogContent>
 						</Dialog>
 					</div>
-					<div className="flex-1 flex flex-col gap-4 overflow-y-auto scrollbar-hide p-2 max-h-96 text-gray-500">
-						{post.comments &&
+					<div className="flex-1 flex flex-col gap-4 overflow-y-auto scrollbar-hide p-2 max-h-96 text-gray-700">
+						{post.caption && (
+							<div className="flex gap-2 items-center">
+								<Avatar className="h-8 w-8">
+									<AvatarImage src={post.author.profilePic} />
+									<AvatarFallback className="bg-white text-lg">
+										{post.author.username[0].toUpperCase()}
+									</AvatarFallback>
+								</Avatar>
+								<span className="font-semibold text-gray-800">
+									{post.author.username}
+								</span>
+								<p>{post.caption}</p>
+							</div>
+						)}
+						{post.comments.length > 0 ? (
 							post.comments.map((comment) => (
 								<div
 									key={comment._id}
@@ -55,7 +71,7 @@ function CommentDialogBox({ open, setOpen, post }) {
 										<AvatarImage
 											src={comment.author.profilePic}
 										/>
-										<AvatarFallback>
+										<AvatarFallback className="bg-white text-lg">
 											{comment.author.username[0].toUpperCase()}
 										</AvatarFallback>
 									</Avatar>
@@ -64,8 +80,8 @@ function CommentDialogBox({ open, setOpen, post }) {
 									</span>
 									<p>{comment.comment}</p>
 								</div>
-							))}
-						{post.comments.length === 0 && (
+							))
+						) : (
 							<p className="text-center">No comments</p>
 						)}
 					</div>

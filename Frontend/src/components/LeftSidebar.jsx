@@ -55,7 +55,7 @@ function LeftSidebar() {
 			icon: (
 				<Avatar className="h-6 w-6">
 					<AvatarImage src={user?.profilePic} />
-					<AvatarFallback>
+					<AvatarFallback className="bg-white text-lg">
 						{user?.username.charAt(0).toUpperCase()}
 					</AvatarFallback>
 				</Avatar>

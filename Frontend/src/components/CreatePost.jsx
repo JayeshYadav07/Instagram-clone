@@ -1,14 +1,17 @@
 import { API_URL, TOAST_OPTION } from "@/utils/constant";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import axios from "axios";
+import { setPost } from "@/redux/postSlice";
 function CreatePost({ open, setOpen }) {
+	const dispatch = useDispatch();
 	const { user } = useSelector((state) => state.auth);
+	const { posts } = useSelector((state) => state.post);
 	const [img, setImg] = useState(null);
 	const [caption, setCaption] = useState("");
 	const [loading, setLoading] = useState(false);
@@ -30,6 +33,7 @@ function CreatePost({ open, setOpen }) {
 
 			if (response.data.success) {
 				toast.success(response.data.message, TOAST_OPTION);
+				dispatch(setPost([response.data.data, ...posts]));
 			} else {
 				toast.error(response.data.message, TOAST_OPTION);
 			}
@@ -56,7 +60,7 @@ function CreatePost({ open, setOpen }) {
 				<div className="flex items-center gap-4">
 					<Avatar className="h-10 w-10 border border-gray-300">
 						<AvatarImage src={user.profilePic} />
-						<AvatarFallback>
+						<AvatarFallback className="bg-white text-lg">
 							{user.username[0].toUpperCase()}
 						</AvatarFallback>
 					</Avatar>

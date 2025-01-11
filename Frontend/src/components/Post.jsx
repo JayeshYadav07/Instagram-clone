@@ -21,16 +21,18 @@ function Post({ post }) {
 	const [text, setText] = useState("");
 	const [open, setOpen] = useState(false);
 	return (
-		<div className="mx-auto max-w-sm border-b-2 border-gray-400 py-2 my-2">
+		<div className="mx-auto max-w-sm border-b-2 border-gray-400 py-2 my-2 text-sm">
 			<div className="flex justify-between items-center mb-2">
 				<div className="flex gap-2 items-center">
 					<Avatar className="h-10 w-10">
 						<AvatarImage src={post.author.profilePic} />
-						<AvatarFallback>
+						<AvatarFallback className="bg-white text-lg">
 							{post.author.username[0].toUpperCase()}
 						</AvatarFallback>
 					</Avatar>
-					<span>{post.author.username}</span>
+					<span className="font-semibold">
+						{post.author.username}
+					</span>
 				</div>
 				<Dialog>
 					<DialogTrigger>
@@ -44,7 +46,7 @@ function Post({ post }) {
 				</Dialog>
 			</div>
 			<img
-				className="w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-sm object-cover py-2 md:px-6 lg:px-8 bg-white"
+				className="w-full h-[200px] sm:h-[300px] md:h-[400px] rounded-sm object-contain bg-white"
 				src={post.post_url}
 				alt="img"
 			/>
@@ -95,13 +97,25 @@ function Post({ post }) {
 					</Tooltip>
 				</TooltipProvider>
 			</div>
-			<span>{post.likes.length} likes</span>
-			<p
-				className="text-sm text-gray-500 cursor-pointer"
-				onClick={() => setOpen(true)}
-			>
-				View all {post.comments.length} comments
-			</p>
+			{post.likes.length > 0 && (
+				<span className="font-semibold">{post.likes.length} likes</span>
+			)}
+			{post.caption && (
+				<div className="my-2">
+					<span className="font-semibold">
+						{post.author.username}
+					</span>{" "}
+					<span>{post.caption}</span>
+				</div>
+			)}
+			{post.comments.length > 0 && (
+				<p
+					className="text-sm text-gray-500 cursor-pointer"
+					onClick={() => setOpen(true)}
+				>
+					View all {post.comments.length} comments
+				</p>
+			)}
 			<CommentDialogBox open={open} setOpen={setOpen} post={post} />
 			<div className="flex justify-between items-center gap-2">
 				<input
