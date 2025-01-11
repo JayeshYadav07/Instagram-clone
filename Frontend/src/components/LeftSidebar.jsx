@@ -53,9 +53,9 @@ function LeftSidebar() {
 			id: crypto.randomUUID(),
 			title: "Profile",
 			icon: (
-				<Avatar className="h-6 w-6">
+				<Avatar className="h-7 w-7">
 					<AvatarImage src={user?.profilePic} />
-					<AvatarFallback className="bg-white text-lg">
+					<AvatarFallback className="bg-slate-200 text-lg">
 						{user?.username.charAt(0).toUpperCase()}
 					</AvatarFallback>
 				</Avatar>

@@ -17,11 +17,11 @@ function CommentDialogBox({ open, setOpen, post }) {
 					/>
 				</div>
 				<div className="md:w-1/2 flex flex-col">
-					<div className="flex justify-between border-b border-gray-300 pb-2">
+					<div className="flex justify-between border-b border-gray-300 px-2 py-4">
 						<div className="flex gap-2 items-center">
-							<Avatar className="h-10 w-10">
+							<Avatar className="h-8 w-8">
 								<AvatarImage src={post.author.profilePic} />
-								<AvatarFallback className="bg-white text-lg">
+								<AvatarFallback className="bg-slate-200 text-lg">
 									{post.author.username[0].toUpperCase()}
 								</AvatarFallback>
 							</Avatar>
@@ -46,12 +46,12 @@ function CommentDialogBox({ open, setOpen, post }) {
 							</DialogContent>
 						</Dialog>
 					</div>
-					<div className="flex-1 flex flex-col gap-4 overflow-y-auto scrollbar-hide p-2 max-h-96 text-gray-700">
+					<div className="flex-1 flex flex-col gap-4 overflow-y-auto scrollbar-hide px-2 py-4 max-h-96 text-gray-700">
 						{post.caption && (
 							<div className="flex gap-2 items-center">
 								<Avatar className="h-8 w-8">
 									<AvatarImage src={post.author.profilePic} />
-									<AvatarFallback className="bg-white text-lg">
+									<AvatarFallback className="bg-slate-200 text-lg">
 										{post.author.username[0].toUpperCase()}
 									</AvatarFallback>
 								</Avatar>
@@ -71,7 +71,7 @@ function CommentDialogBox({ open, setOpen, post }) {
 										<AvatarImage
 											src={comment.author.profilePic}
 										/>
-										<AvatarFallback className="bg-white text-lg">
+										<AvatarFallback className="bg-slate-200 text-lg">
 											{comment.author.username[0].toUpperCase()}
 										</AvatarFallback>
 									</Avatar>

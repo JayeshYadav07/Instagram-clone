@@ -136,7 +136,7 @@ function Post({ post }) {
 				<div className="flex gap-2 items-center">
 					<Avatar className="h-10 w-10">
 						<AvatarImage src={post.author.profilePic} />
-						<AvatarFallback className="bg-white text-lg">
+						<AvatarFallback className="bg-slate-200 text-lg">
 							{post.author.username[0].toUpperCase()}
 						</AvatarFallback>
 					</Avatar>
@@ -174,7 +174,7 @@ function Post({ post }) {
 				</Dialog>
 			</div>
 			<img
-				className="w-full h-[200px] sm:h-[300px] md:h-[400px] rounded-sm object-con bg-white"
+				className="w-full h-[200px] sm:h-[300px] md:h-[400px] rounded-sm object-contain"
 				src={post.post_url}
 				alt="img"
 			/>
@@ -185,9 +185,14 @@ function Post({ post }) {
 							<TooltipTrigger>
 								<Heart
 									className="cursor-pointer hover:text-gray-500"
+									stroke={
+										post.likes.includes(user._id)
+											? "#e85d54"
+											: "currentColor"
+									}
 									fill={
 										post.likes.includes(user._id)
-											? "#ff0000"
+											? "#e85d54"
 											: "none"
 									}
 									onClick={() =>
@@ -227,7 +232,15 @@ function Post({ post }) {
 				<TooltipProvider>
 					<Tooltip>
 						<TooltipTrigger>
-							<BookmarkIcon className="cursor-pointer hover:text-gray-500" />
+							<BookmarkIcon
+								className="cursor-pointer hover:text-gray-500"
+								fill={
+									user.bookmarks.includes(post._id)
+										? "black"
+										: "none"
+								}
+								onClick={() => handleAddToBookmark(post._id)}
+							/>
 						</TooltipTrigger>
 						<TooltipContent side="bottom">
 							<p>Bookmark</p>

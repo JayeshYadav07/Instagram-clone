@@ -60,7 +60,7 @@ function CreatePost({ open, setOpen }) {
 				<div className="flex items-center gap-4">
 					<Avatar className="h-10 w-10 border border-gray-300">
 						<AvatarImage src={user.profilePic} />
-						<AvatarFallback className="bg-white text-lg">
+						<AvatarFallback className="bg-slate-200 text-lg">
 							{user.username[0].toUpperCase()}
 						</AvatarFallback>
 					</Avatar>
