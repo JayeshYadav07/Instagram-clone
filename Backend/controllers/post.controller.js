@@ -31,6 +31,7 @@ const addPost = async (req, res) => {
 		});
 
 		await User.updateOne({ _id: userId }, { $push: { posts: post._id } });
+		await post.populate({ path: "author", select: "-password" });
 
 		return res.status(200).json({
 			success: true,
