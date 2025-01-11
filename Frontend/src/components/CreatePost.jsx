@@ -85,7 +85,7 @@ function CreatePost({ open, setOpen }) {
 						<img
 							src={URL.createObjectURL(img)}
 							alt="img"
-							className="w-full max-h-64 object-cover border border-gray-300 rounded p-2"
+							className="w-full max-h-64 object-contain border border-gray-300 rounded p-2"
 						/>
 					)}
 					<label

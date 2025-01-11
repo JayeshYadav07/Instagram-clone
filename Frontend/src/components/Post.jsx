@@ -1,3 +1,6 @@
+import { setPost } from "@/redux/postSlice";
+import { API_URL, TOAST_OPTION } from "@/utils/constant";
+import axios from "axios";
 import {
 	BookmarkIcon,
 	Heart,
@@ -5,6 +8,10 @@ import {
 	MoreHorizontal,
 	Send,
 } from "lucide-react";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
+import CommentDialogBox from "./CommentDialogBox";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
@@ -14,12 +21,89 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "./ui/tooltip";
-import { useState } from "react";
-import CommentDialogBox from "./CommentDialogBox";
 
 function Post({ post }) {
+	const dispatch = useDispatch();
+	const { user } = useSelector((state) => state.auth);
+	const { posts } = useSelector((state) => state.post);
 	const [text, setText] = useState("");
 	const [open, setOpen] = useState(false);
+
+	const handleLikeAndDislike = async (id) => {
+		try {
+			if (post.likes.includes(user._id)) {
+				const response = await axios.post(
+					`${API_URL}/post/dislike/${id}`,
+					{},
+					{
+						withCredentials: true,
+					}
+				);
+				if (response.data.success) {
+					const updatedPosts = posts.map((post) => {
+						if (post._id === id) {
+							return {
+								...post,
+								likes: post.likes.filter(
+									(like) => like !== user._id
+								),
+							};
+						}
+						return post;
+					});
+					dispatch(setPost(updatedPosts));
+					toast.success(response.data.message, TOAST_OPTION);
+				} else {
+					toast.error(response.data.message, TOAST_OPTION);
+				}
+			} else {
+				const response = await axios.post(
+					`${API_URL}/post/like/${id}`,
+					{},
+					{
+						withCredentials: true,
+					}
+				);
+				if (response.data.success) {
+					const updatedPosts = posts.map((post) => {
+						if (post._id === id) {
+							return {
+								...post,
+								likes: [...post.likes, user._id],
+							};
+						}
+						return post;
+					});
+					dispatch(setPost(updatedPosts));
+					toast.success(response.data.message, TOAST_OPTION);
+				} else {
+					toast.error(response.data.message, TOAST_OPTION);
+				}
+			}
+		} catch (error) {
+			toast.error("Something went wrong", TOAST_OPTION);
+		}
+	};
+	const deletePost = async (id) => {
+		try {
+			const response = await axios.delete(
+				`${API_URL}/post/delete/${id}`,
+				{
+					withCredentials: true,
+				}
+			);
+
+			if (response.data.success) {
+				const updatedPosts = posts.filter((post) => post._id !== id);
+				dispatch(setPost(updatedPosts));
+				toast.success(response.data.message, TOAST_OPTION);
+			} else {
+				toast.error(response.data.message, TOAST_OPTION);
+			}
+		} catch (error) {
+			toast.error("Something went wrong", TOAST_OPTION);
+		}
+	};
 	return (
 		<div className="mx-auto max-w-sm border-b-2 border-gray-400 py-2 my-2 text-sm">
 			<div className="flex justify-between items-center mb-2">
@@ -41,12 +125,19 @@ function Post({ post }) {
 					<DialogContent className="flex flex-col text-sm text-center max-w-sm">
 						<Button variant="ghost">Unfollow</Button>
 						<Button variant="ghost">Add to favorites</Button>
-						<Button variant="ghost">Delete</Button>
+						{user._id === post.author._id && (
+							<Button
+								variant="ghost"
+								onClick={() => deletePost(post._id)}
+							>
+								Delete
+							</Button>
+						)}
 					</DialogContent>
 				</Dialog>
 			</div>
 			<img
-				className="w-full h-[200px] sm:h-[300px] md:h-[400px] rounded-sm object-contain bg-white"
+				className="w-full h-[200px] sm:h-[300px] md:h-[400px] rounded-sm object-con bg-white"
 				src={post.post_url}
 				alt="img"
 			/>
@@ -55,7 +146,17 @@ function Post({ post }) {
 					<TooltipProvider>
 						<Tooltip>
 							<TooltipTrigger>
-								<Heart className="cursor-pointer hover:text-gray-500" />
+								<Heart
+									className="cursor-pointer hover:text-gray-500"
+									fill={
+										post.likes.includes(user._id)
+											? "red"
+											: "none"
+									}
+									onClick={() =>
+										handleLikeAndDislike(post._id)
+									}
+								/>
 							</TooltipTrigger>
 							<TooltipContent side="bottom">
 								<p>Like</p>
