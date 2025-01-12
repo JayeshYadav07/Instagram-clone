@@ -130,6 +130,36 @@ function Post({ post }) {
 			toast.error("Something went wrong", TOAST_OPTION);
 		}
 	};
+
+	const handleComment = async () => {
+		try {
+			const response = await axios.post(
+				`${API_URL}/post/comment/${post._id}`,
+				{ comment: text },
+				{
+					withCredentials: true,
+				}
+			);
+			if (response.data.success) {
+				toast.success(response.data.message, TOAST_OPTION);
+				setText("");
+				const updatedPosts = posts.map((item) => {
+					if (item._id === post._id) {
+						return {
+							...item,
+							comments: [...item.comments, response.data.data],
+						};
+					}
+					return item;
+				});
+				dispatch(setPost(updatedPosts));
+			} else {
+				toast.error(response.data.message, TOAST_OPTION);
+			}
+		} catch (error) {
+			toast.error("Something went wrong", TOAST_OPTION);
+		}
+	};
 	return (
 		<div className="mx-auto max-w-sm border-b-2 border-gray-400 py-2 my-2 text-sm">
 			<div className="flex justify-between items-center mb-2">
@@ -277,7 +307,12 @@ function Post({ post }) {
 					className="w-full outline-none border-none bg-transparent"
 				/>
 				{text && (
-					<span className="cursor-pointer text-blue-600">Post</span>
+					<span
+						className="cursor-pointer text-blue-600"
+						onClick={handleComment}
+					>
+						Post
+					</span>
 				)}
 			</div>
 		</div>

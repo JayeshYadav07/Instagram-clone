@@ -3,9 +3,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { useState } from "react";
 import { Button } from "./ui/button";
+import useFetchPostComments from "@/hooks/useFetchPostComments";
+import { useSelector } from "react-redux";
 
 function CommentDialogBox({ open, setOpen, post }) {
 	const [text, setText] = useState("");
+	useFetchPostComments(post._id, open);
+	const { comments } = useSelector((state) => state.post);
 	return (
 		<Dialog open={open} onOpenChange={() => setOpen(false)}>
 			<DialogContent className="text-sm md:flex md:max-w-5xl [&>button]:hidden">
@@ -20,7 +24,7 @@ function CommentDialogBox({ open, setOpen, post }) {
 					<div className="flex justify-between border-b border-gray-300 px-2 py-4">
 						<div className="flex gap-2 items-center">
 							<Avatar className="h-8 w-8">
-								<AvatarImage src={post.author.profilePic} />
+								<AvatarImage src={post.author?.profilePic} />
 								<AvatarFallback className="bg-slate-200 text-lg">
 									{post.author.username[0].toUpperCase()}
 								</AvatarFallback>
@@ -50,7 +54,9 @@ function CommentDialogBox({ open, setOpen, post }) {
 						{post.caption && (
 							<div className="flex gap-2 items-center">
 								<Avatar className="h-8 w-8">
-									<AvatarImage src={post.author.profilePic} />
+									<AvatarImage
+										src={post.author?.profilePic}
+									/>
 									<AvatarFallback className="bg-slate-200 text-lg">
 										{post.author.username[0].toUpperCase()}
 									</AvatarFallback>
@@ -61,15 +67,15 @@ function CommentDialogBox({ open, setOpen, post }) {
 								<p>{post.caption}</p>
 							</div>
 						)}
-						{post.comments.length > 0 ? (
-							post.comments.map((comment) => (
+						{comments.length > 0 ? (
+							comments.map((comment) => (
 								<div
 									key={comment._id}
 									className="flex gap-2 items-center"
 								>
 									<Avatar className="h-8 w-8">
 										<AvatarImage
-											src={comment.author.profilePic}
+											src={comment.author?.profilePic}
 										/>
 										<AvatarFallback className="bg-slate-200 text-lg">
 											{comment.author.username[0].toUpperCase()}
