@@ -1,4 +1,4 @@
-import { setPost } from "@/redux/postSlice";
+import { setPost, setPostComments } from "@/redux/postSlice";
 import { API_URL, TOAST_OPTION } from "@/utils/constant";
 import axios from "axios";
 import {
@@ -26,7 +26,7 @@ import { addBookmark, removeBookmark } from "@/redux/authSlice";
 function Post({ post }) {
 	const dispatch = useDispatch();
 	const { user } = useSelector((state) => state.auth);
-	const { posts } = useSelector((state) => state.post);
+	const { posts, comments } = useSelector((state) => state.post);
 	const [text, setText] = useState("");
 	const [open, setOpen] = useState(false);
 
@@ -131,10 +131,10 @@ function Post({ post }) {
 		}
 	};
 
-	const handleComment = async () => {
+	const handleComment = async (id, text, setText) => {
 		try {
 			const response = await axios.post(
-				`${API_URL}/post/comment/${post._id}`,
+				`${API_URL}/post/comment/${id}`,
 				{ comment: text },
 				{
 					withCredentials: true,
@@ -152,11 +152,16 @@ function Post({ post }) {
 					}
 					return item;
 				});
+				dispatch(setPostComments([response.data.data, ...comments]));
 				dispatch(setPost(updatedPosts));
 			} else {
-				toast.error(response.data.message, TOAST_OPTION);
+				toast.error(
+					response.data.message || "Something went wrong",
+					TOAST_OPTION
+				);
 			}
 		} catch (error) {
+			console.log(error);
 			toast.error("Something went wrong", TOAST_OPTION);
 		}
 	};
@@ -173,6 +178,13 @@ function Post({ post }) {
 					<span className="font-semibold">
 						{post.author.username}
 					</span>
+					<div>
+						{post.author._id === user._id && (
+							<span className="text-xs text-gray-400">
+								Author
+							</span>
+						)}
+					</div>
 				</div>
 				<Dialog>
 					<DialogTrigger>
@@ -204,7 +216,7 @@ function Post({ post }) {
 				</Dialog>
 			</div>
 			<img
-				className="w-full h-[200px] sm:h-[300px] md:h-[400px] rounded-sm object-contain"
+				className="w-full h-[200px] sm:h-[300px] md:h-[400px] rounded-sm object-contain shadow-md"
 				src={post.post_url}
 				alt="img"
 			/>
@@ -297,7 +309,14 @@ function Post({ post }) {
 					View all {post.comments.length} comments
 				</p>
 			)}
-			<CommentDialogBox open={open} setOpen={setOpen} post={post} />
+			<CommentDialogBox
+				open={open}
+				setOpen={setOpen}
+				post={post}
+				handleComment={handleComment}
+				deletePost={deletePost}
+				handleAddToBookmark={handleAddToBookmark}
+			/>
 			<div className="flex justify-between items-center gap-2">
 				<input
 					type="text"
@@ -309,7 +328,7 @@ function Post({ post }) {
 				{text && (
 					<span
 						className="cursor-pointer text-blue-600"
-						onClick={handleComment}
+						onClick={() => handleComment(post._id, text, setText)}
 					>
 						Post
 					</span>
