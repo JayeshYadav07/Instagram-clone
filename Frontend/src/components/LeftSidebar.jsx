@@ -92,6 +92,8 @@ function LeftSidebar() {
 			return handleLogout();
 		} else if (title === "Create") {
 			setOpenCreatePost(true);
+		} else if (title === "Profile") {
+			navigate(`/profile/${user._id}`);
 		}
 	};
 
