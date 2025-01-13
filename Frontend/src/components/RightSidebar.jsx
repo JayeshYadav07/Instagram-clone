@@ -15,7 +15,7 @@ function RightSidebar() {
 		return bio;
 	};
 	return (
-		<div className="hidden xl:block xl:w-1/4 bg-white px-8 py-6 shadow">
+		<div className="hidden xl:block xl:w-1/3 bg-white px-8 py-6 shadow">
 			<div className="flex items-center gap-4">
 				<Avatar className="h-10 w-10 bg-slate-200">
 					<AvatarImage src={user.profilePic} />
