@@ -94,6 +94,8 @@ function LeftSidebar() {
 			setOpenCreatePost(true);
 		} else if (title === "Profile") {
 			navigate(`/profile/${user._id}`);
+		} else if (title === "Home") {
+			navigate("/");
 		}
 	};
 

@@ -22,7 +22,7 @@ function Profile() {
 	useFetchUserProfile(id);
 	const { profile } = useSelector((state) => state.profile);
 	const [selectedTab, setSelectedTab] = useState("posts");
-	// return <pre>{JSON.stringify(profile, null, 4)}</pre>;
+	const { user } = useSelector((state) => state.auth);
 	return (
 		<div className="w-full lg:w-2/3 mx-auto">
 			<div className="px-4 pt-14 flex flex-col gap-8">
@@ -36,20 +36,24 @@ function Profile() {
 					<div className="flex flex-col gap-6">
 						<div className="flex items-center gap-4">
 							<h1 className="text-xl">{profile?.username}</h1>
-							<Button
-								variant="outline"
-								className="bg-blue-500 text-white"
-							>
+							<Button variant="outline" className="bg-slate-200">
 								Edit Profile
 							</Button>
-							<Button
-								variant="outline"
-								className="bg-blue-500 text-white"
-							>
-								Follow
-							</Button>
+							{user?._id !== id && (
+								<Button
+									variant="outline"
+									className="bg-slate-200"
+								>
+									Follow
+								</Button>
+							)}
 							<button>
-								<MoreHorizontalIcon />
+								<Button
+									variant="outline"
+									className="bg-slate-200"
+								>
+									More
+								</Button>
 							</button>
 						</div>
 						<div className="flex gap-4">
@@ -102,14 +106,16 @@ function Profile() {
 							<DiscAlbumIcon />
 							<span>REELS</span>
 						</Button>
-						<Button
-							variant="ghost"
-							onClick={() => setSelectedTab("saved")}
-							className={selectedTab === "saved" && activeTab}
-						>
-							<BookMarkedIcon />
-							<span>SAVED</span>
-						</Button>
+						{user?._id === id && (
+							<Button
+								variant="ghost"
+								onClick={() => setSelectedTab("saved")}
+								className={selectedTab === "saved" && activeTab}
+							>
+								<BookMarkedIcon />
+								<span>SAVED</span>
+							</Button>
+						)}
 					</div>
 					<div className="mt-4 w-[95%] mx-auto">
 						{selectedTab === "posts" && (
@@ -124,11 +130,11 @@ function Profile() {
 										<div className="flex z-10 absolute top-0 left-0 h-full w-full justify-center items-center gap-4 opacity-0 bg-slate-700 text-white cursor-pointer hover:bg-opacity-45 hover:opacity-100">
 											<span className="flex items-center gap-1">
 												{post.likes.length}
-												<HeartIcon fill="white"/>
+												<HeartIcon fill="white" />
 											</span>
 											<span className="flex items-center gap-1">
 												{post.comments.length}
-												<MessageCircleIcon fill="white"/>
+												<MessageCircleIcon fill="white" />
 											</span>
 										</div>
 									</div>
@@ -158,7 +164,7 @@ function Profile() {
 											</span>
 											<span className="flex items-center gap-1">
 												{post.comments.length}
-												<MessageCircleIcon fill="white"/>
+												<MessageCircleIcon fill="white" />
 											</span>
 										</div>
 									</div>

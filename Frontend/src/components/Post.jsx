@@ -22,9 +22,11 @@ import {
 	TooltipTrigger,
 } from "./ui/tooltip";
 import { addBookmark, removeBookmark } from "@/redux/authSlice";
+import { useNavigate } from "react-router-dom";
 
 function Post({ post }) {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const { user } = useSelector((state) => state.auth);
 	const { posts, comments } = useSelector((state) => state.post);
 	const [text, setText] = useState("");
@@ -175,7 +177,10 @@ function Post({ post }) {
 							{post.author.username[0].toUpperCase()}
 						</AvatarFallback>
 					</Avatar>
-					<span className="font-semibold">
+					<span
+						className="font-semibold cursor-pointer"
+						onClick={() => navigate(`/profile/${post.author._id}`)}
+					>
 						{post.author.username}
 					</span>
 					<div>
