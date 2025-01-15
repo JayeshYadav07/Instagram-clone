@@ -204,7 +204,7 @@ const updateProfile = async (req, res) => {
 const getSuggestedUsers = async (req, res) => {
 	try {
 		const users = await User.find(
-			{ _id: { $ne: req.userId } },
+			{ _id: { $ne: req.userId }, followers: { $ne: req.userId } },
 			{ password: 0 }
 		);
 
