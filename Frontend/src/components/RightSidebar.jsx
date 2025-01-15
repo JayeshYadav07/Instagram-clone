@@ -1,12 +1,10 @@
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { LucideLogOut, LucideSettings } from "lucide-react";
 import { Button } from "./ui/button";
-import { useNavigate } from "react-router-dom";
 
 function RightSidebar() {
 	const { user, suggestedUsers } = useSelector((state) => state.auth);
-	const navigate = useNavigate();
 	const shortBio = (bio, length) => {
 		if (!bio) return "bio ...";
 
@@ -24,15 +22,14 @@ function RightSidebar() {
 						{user.username[0].toUpperCase()}
 					</AvatarFallback>
 				</Avatar>
-				<div
-					className="flex flex-col cursor-pointer"
-					onClick={() => navigate(`/profile/${user._id}`)}
-				>
-					<span className="font-semibold">{user.username}</span>
-					<span className="text-xs text-gray-400">
-						{shortBio(user.bio, 60)}
-					</span>
-				</div>
+				<Link to={`/profile/${user._id}`}>
+					<div className="flex flex-col cursor-pointer">
+						<span className="font-semibold">{user.username}</span>
+						<span className="text-xs text-gray-400">
+							{shortBio(user.bio, 60)}
+						</span>
+					</div>
+				</Link>
 			</div>
 			<div className="mt-8 flex flex-col gap-4	">
 				<div className="flex items-center justify-between">
@@ -50,17 +47,16 @@ function RightSidebar() {
 									{user?.username[0].toUpperCase()}
 								</AvatarFallback>
 							</Avatar>
-							<div
-								className="flex flex-col cursor-pointer"
-								onClick={() => navigate(`/profile/${user._id}`)}
-							>
-								<span className="font-semibold">
-									{user?.username}
-								</span>
-								<span className="text-xs text-gray-400">
-									{shortBio(user?.bio, 30)}
-								</span>
-							</div>
+							<Link to={`/profile/${user._id}`}>
+								<div className="flex flex-col cursor-pointer">
+									<span className="font-semibold">
+										{user.username}
+									</span>
+									<span className="text-xs text-gray-400">
+										{shortBio(user.bio, 30)}
+									</span>
+								</div>
+							</Link>
 							<Button
 								size="sm"
 								variant="ghost"

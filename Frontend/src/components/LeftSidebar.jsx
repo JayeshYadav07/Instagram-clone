@@ -9,13 +9,13 @@ import {
 	Plus,
 	Search,
 } from "lucide-react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
-import SidebarItem from "./SidebarItem";
 import CreatePost from "./CreatePost";
-import { useState } from "react";
+import SidebarItem from "./SidebarItem";
 
 function LeftSidebar() {
 	const dispatch = useDispatch();
@@ -102,12 +102,11 @@ function LeftSidebar() {
 	return (
 		<div className="hidden md:block md:w-1/4 lg:w-1/5 xl:w-1/6 bg-white p-4 shadow">
 			<div>
-				<h1
-					className="text-2xl font-normal p-2 cursor-pointer mb-4"
-					onClick={() => navigate("/")}
-				>
-					Instagram
-				</h1>
+				<Link to="/">
+					<h1 className="text-2xl font-normal p-2 cursor-pointer mb-4">
+						Instagram
+					</h1>
+				</Link>
 			</div>
 			<div className="flex flex-col gap-4">
 				{sidebarItem.map((item) => {

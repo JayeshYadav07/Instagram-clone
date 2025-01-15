@@ -25,7 +25,7 @@ const useFetchUserProfile = (id) => {
 			}
 		};
 		fetchUserProfile();
-	}, []);
+	}, [id]);
 	return null;
 };
 

@@ -1,3 +1,4 @@
+import { addBookmark, removeBookmark } from "@/redux/authSlice";
 import { setPost, setPostComments } from "@/redux/postSlice";
 import { API_URL, TOAST_OPTION } from "@/utils/constant";
 import axios from "axios";
@@ -10,6 +11,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import CommentDialogBox from "./CommentDialogBox";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -21,12 +23,9 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "./ui/tooltip";
-import { addBookmark, removeBookmark } from "@/redux/authSlice";
-import { useNavigate } from "react-router-dom";
 
 function Post({ post }) {
 	const dispatch = useDispatch();
-	const navigate = useNavigate();
 	const { user } = useSelector((state) => state.auth);
 	const { posts, comments } = useSelector((state) => state.post);
 	const [text, setText] = useState("");
@@ -177,12 +176,11 @@ function Post({ post }) {
 							{post.author.username[0].toUpperCase()}
 						</AvatarFallback>
 					</Avatar>
-					<span
-						className="font-semibold cursor-pointer"
-						onClick={() => navigate(`/profile/${post.author._id}`)}
-					>
-						{post.author.username}
-					</span>
+					<Link to={`/profile/${post.author._id}`}>
+						<span className="font-semibold">
+							{post.author.username}
+						</span>
+					</Link>
 					<div>
 						{post.author._id === user._id && (
 							<span className="text-xs text-gray-400">
@@ -221,7 +219,7 @@ function Post({ post }) {
 				</Dialog>
 			</div>
 			<img
-				className="w-full h-[200px] sm:h-[300px] md:h-[400px] rounded-sm object-contain shadow-md"
+				className="w-full h-[200px] sm:h-[300px] md:h-[400px] rounded-sm object-contain shadow-md hover:shadow-lg cursor-pointer mb-4"
 				src={post.post_url}
 				alt="img"
 			/>

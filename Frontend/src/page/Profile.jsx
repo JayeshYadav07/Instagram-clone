@@ -2,59 +2,112 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import useFetchUserProfile from "@/hooks/useFetchUserProfile";
+import { followUser, unfollowUser } from "@/redux/profileSlice";
+import { API_URL, TOAST_OPTION } from "@/utils/constant";
+import axios from "axios";
 import {
 	BookMarkedIcon,
 	DiscAlbumIcon,
 	Grid,
-	Heart,
 	HeartIcon,
 	MessageCircleIcon,
-	MoreHorizontalIcon,
 } from "lucide-react";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const activeTab = "text-black border-t-2 border-slate-400 rounded-none";
 
 function Profile() {
 	const { id } = useParams();
 	useFetchUserProfile(id);
+	const dispatch = useDispatch();
 	const { profile } = useSelector((state) => state.profile);
-	const [selectedTab, setSelectedTab] = useState("posts");
 	const { user } = useSelector((state) => state.auth);
+	const [selectedTab, setSelectedTab] = useState("posts");
+	const [isFollowed, setIsFollowed] = useState(
+		profile.followers.includes(user._id)
+	);
+
+	const handleFollow = async () => {
+		try {
+			const response = await axios.post(
+				`${API_URL}/user/follow-user/${id}`,
+				{},
+				{ withCredentials: true }
+			);
+			if (response.data.success) {
+				setIsFollowed(true);
+				dispatch(followUser(id));
+				toast.success(response.data.message, TOAST_OPTION);
+			} else {
+				console.log(response.data);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const handleUnfollow = async () => {
+		try {
+			const response = await axios.post(
+				`${API_URL}/user/unfollow-user/${id}`,
+				{},
+				{ withCredentials: true }
+			);
+			if (response.data.success) {
+				setIsFollowed(false);
+				dispatch(unfollowUser(id));
+				toast.success(response.data.message, TOAST_OPTION);
+			} else {
+				console.log(response.data);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
 	return (
 		<div className="w-full lg:w-2/3 mx-auto">
 			<div className="px-4 pt-14 flex flex-col gap-8">
 				<div className="flex gap-8 items-center">
-					<Avatar className="w-36 h-36 m-4">
+					<Avatar className="w-36 h-36 m-4 border border-slate-200">
 						<AvatarImage src={profile?.profilePic} />
-						<AvatarFallback className="bg-slate-200 text-xl">
+						<AvatarFallback className="text-lg">
 							{profile?.username[0].toUpperCase()}
 						</AvatarFallback>
 					</Avatar>
-					<div className="flex flex-col gap-6">
-						<div className="flex items-center gap-4">
-							<h1 className="text-xl">{profile?.username}</h1>
-							<Button variant="outline" className="bg-slate-200">
-								Edit Profile
-							</Button>
-							{user?._id !== id && (
-								<Button
-									variant="outline"
-									className="bg-slate-200"
-								>
-									Follow
-								</Button>
-							)}
-							<button>
-								<Button
-									variant="outline"
-									className="bg-slate-200"
-								>
-									More
-								</Button>
-							</button>
+					<div className="flex flex-col gap-6 max-w-lg">
+						<div className="flex items-center gap-4 justify-between">
+							<h1 className="text-xl font-semibold mr-4 ">
+								{profile?.username}
+							</h1>
+							<div className="flex gap-2">
+								{user?._id === id && (
+									<Button variant="outline">
+										Edit Profile
+									</Button>
+								)}
+								{user?._id !== id && isFollowed === false && (
+									<Button
+										variant="outline"
+										className="bg-blue-400 text-white"
+										onClick={handleFollow}
+									>
+										Follow
+									</Button>
+								)}
+								{user?._id !== id && isFollowed === true && (
+									<Button
+										variant="outline"
+										className="bg-slate-400 text-white"
+										onClick={handleUnfollow}
+									>
+										Unfollow
+									</Button>
+								)}
+								<Button variant="outline">More</Button>
+							</div>
 						</div>
 						<div className="flex gap-4">
 							<span>
