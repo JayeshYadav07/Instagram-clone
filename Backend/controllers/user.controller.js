@@ -343,6 +343,32 @@ const unfollowUser = async (req, res) => {
 	}
 };
 
+const getChatUsers = async (req, res) => {
+	try {
+		const users = await User.find(
+			{ _id: { $ne: req.userId }, followers: { $eq: req.userId } },
+			{ password: 0 }
+		);
+
+		if (!users) {
+			return res.status(401).json({
+				success: false,
+				message: "Users not found!",
+			});
+		}
+		return res.status(200).json({
+			success: true,
+			message: "Users fetched successfully!",
+			data: users,
+		});
+	} catch (error) {
+		return res.status(401).json({
+			success: false,
+			message: error.message,
+		});
+	}
+};
+
 module.exports = {
 	register,
 	login,
@@ -352,4 +378,5 @@ module.exports = {
 	getSuggestedUsers,
 	followUser,
 	unfollowUser,
+	getChatUsers,
 };

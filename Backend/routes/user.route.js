@@ -8,6 +8,7 @@ const {
 	getSuggestedUsers,
 	followUser,
 	unfollowUser,
+	getChatUsers,
 } = require("../controllers/user.controller");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const upload = require("../middlewares/multer");
@@ -34,5 +35,7 @@ router.get("/suggested-users", isAuthenticated, getSuggestedUsers);
 router.post("/follow-user/:id", isAuthenticated, followUser);
 
 router.post("/unfollow-user/:id", isAuthenticated, unfollowUser);
+
+router.get("/chat-users", isAuthenticated, getChatUsers);
 
 module.exports = router;
