@@ -167,9 +167,17 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
 	const id = req.userId;
 	try {
-		const { username, email, bio } = req.body;
+		const { username, email, bio, gender } = req.body;
 
-		const user = await User.findById(id, "-password");
+		const user = await User.findById(id, "-password")
+			.populate({
+				path: "posts",
+				createdAt: -1,
+			})
+			.populate({
+				path: "bookmarks",
+				createdAt: -1,
+			});
 
 		if (!user) {
 			return res.status(401).json({
@@ -178,14 +186,16 @@ const updateProfile = async (req, res) => {
 			});
 		}
 
-		const file = req.file;
-
-		const result = await uploadStream(file.buffer, "image");
-
 		user.username = username || user.username;
 		user.email = email || user.email;
 		user.bio = bio || user.bio;
-		user.profilePic = result.secure_url || user.profilePic;
+		user.gender = gender || user.gender;
+
+		const file = req.file;
+		if (file) {
+			const result = await uploadStream(file.buffer, "image");
+			user.profilePic = result.secure_url || user.profilePic;
+		}
 		await user.save();
 
 		return res.status(200).json({

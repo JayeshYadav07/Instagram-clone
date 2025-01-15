@@ -22,6 +22,9 @@ const userSchema = new mongoose.Schema(
 		bio: {
 			type: String,
 		},
+		gender: {
+			type: String,
+		},
 		followers: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
