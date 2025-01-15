@@ -96,6 +96,8 @@ function LeftSidebar() {
 			navigate(`/profile/${user._id}`);
 		} else if (title === "Home") {
 			navigate("/");
+		} else if (title === "Messages") {
+			navigate("/messages");
 		}
 	};
 

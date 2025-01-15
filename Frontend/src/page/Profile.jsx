@@ -93,7 +93,7 @@ function Profile() {
 										</Link>
 										<Button variant="outline">More</Button>
 									</>
-								) : (
+								) : isFollowed ? (
 									<>
 										<Button
 											variant="outline"
@@ -107,9 +107,17 @@ function Profile() {
 											className="bg-blue-400 text-white"
 											onClick={handleFollow}
 										>
-											Follow
+											Message
 										</Button>
 									</>
+								) : (
+									<Button
+										variant="outline"
+										className="bg-blue-400 text-white"
+										onClick={handleFollow}
+									>
+										Follow
+									</Button>
 								)}
 							</div>
 						</div>
@@ -133,6 +141,7 @@ function Profile() {
 								following
 							</span>
 						</div>
+						<p className="text-md">{profile?.bio}</p>
 						<span>
 							<Badge
 								variant="outline"
@@ -141,7 +150,6 @@ function Profile() {
 								@{profile?.username.toLowerCase()}
 							</Badge>
 						</span>
-						<p className="text-md text-gray-700">{profile?.bio}</p>
 					</div>
 				</div>
 				<div>
