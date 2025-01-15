@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 const activeTab = "text-black border-t-2 border-slate-400 rounded-none";
@@ -25,6 +25,7 @@ function Profile() {
 	const dispatch = useDispatch();
 	const { profile } = useSelector((state) => state.profile);
 	const { user } = useSelector((state) => state.auth);
+	const isLoggedIn = user._id === profile._id;
 	const [selectedTab, setSelectedTab] = useState("posts");
 	const [isFollowed, setIsFollowed] = useState(
 		profile.followers.includes(user._id)
@@ -83,30 +84,33 @@ function Profile() {
 								{profile?.username}
 							</h1>
 							<div className="flex gap-2">
-								{user?._id === id && (
-									<Button variant="outline">
-										Edit Profile
-									</Button>
+								{isLoggedIn ? (
+									<>
+										<Link to="/edit">
+											<Button variant="outline">
+												Edit Profile
+											</Button>
+										</Link>
+										<Button variant="outline">More</Button>
+									</>
+								) : (
+									<>
+										<Button
+											variant="outline"
+											className="bg-slate-400 text-white"
+											onClick={handleUnfollow}
+										>
+											Unfollow
+										</Button>
+										<Button
+											variant="outline"
+											className="bg-blue-400 text-white"
+											onClick={handleFollow}
+										>
+											Follow
+										</Button>
+									</>
 								)}
-								{user?._id !== id && isFollowed === false && (
-									<Button
-										variant="outline"
-										className="bg-blue-400 text-white"
-										onClick={handleFollow}
-									>
-										Follow
-									</Button>
-								)}
-								{user?._id !== id && isFollowed === true && (
-									<Button
-										variant="outline"
-										className="bg-slate-400 text-white"
-										onClick={handleUnfollow}
-									>
-										Unfollow
-									</Button>
-								)}
-								<Button variant="outline">More</Button>
 							</div>
 						</div>
 						<div className="flex gap-4">
